@@ -34,7 +34,7 @@ void COMPUTEOPS(int m0, int n0, float *A, float *B, float *C)
     int CS_C = 1;
 
 
-    //Lower Triangular Matrix Multiplication 
+    //Lower Triangular Matrix Multiplication algorithm 
     for(int i0=0; i0<m0; i0++){
         for(int j0=0;j0<n0;j0++){
             float result = 0.0f;
