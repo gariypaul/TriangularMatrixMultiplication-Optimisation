@@ -37,12 +37,17 @@ C is a m0 x n0 matrix
 
 void COMPUTE_OP(int m0, int n0, float *A, float *B, float *C)
 {
+    int root_id = 0;
+    int num_ranks;
+    int rid;
+    MPI_STATUS status;
+    int tag = 0;
     // query the number of ranks from MPI using the default communicator
     num_ranks = MPI_COMM_SIZE(MPI_COMM_WORLD);
     // query the rank of the current process
     rid = MPI_COMM_RANK(MPI_COMM_WORLD);
 
-    if (rid == 0)
+    if (rid == root_id)
     {
         // Matrices Row and Column Strides
         // Matrices are stored in Row Major Order
@@ -76,29 +81,39 @@ void COMPUTE_OP(int m0, int n0, float *A, float *B, float *C)
 
 void DISTRIBUTE_ALLOCATION(int m0, int n0, float **A_dist, float **B_dist, float **C_dist)
 {
+
+    int root_id = 0;
+    int num_ranks;
+    int rid;
+    MPI_STATUS status;
+    int tag = 0;
     // query the number of ranks from MPI using the default communicator
     num_ranks = MPI_COMM_SIZE(MPI_COMM_WORLD);
     // query the rank of the current process
     rid = MPI_COMM_RANK(MPI_COMM_WORLD);
 
-    if(rid == 0)
+    if (rid == root_id)
     {
         // Allocate memory for the matrices
         *A_dist = (float *)malloc(m0 * n0 * sizeof(float));
         *B_dist = (float *)malloc(m0 * n0 * sizeof(float));
         *C_dist = (float *)malloc(m0 * n0 * sizeof(float));
     }
-
 }
 
 void DISTRIBUTE_DATA(int m0, int n0, float *A_seq, float *B_seq, float *C_seq, float *A_dist, float *B_dist, float *C_dist)
 {
+    int root_id = 0;
+    int num_ranks;
+    int rid;
+    MPI_STATUS status;
+    int tag = 0;
     // query the number of ranks from MPI using the default communicator
     num_ranks = MPI_COMM_SIZE(MPI_COMM_WORLD);
     // query the rank of the current process
     rid = MPI_COMM_RANK(MPI_COMM_WORLD);
 
-    if(rid == 0)
+    if (rid == root_id)
     {
         // Copy the data from the sequential matrices to the distributed matrices
         for (int i0 = 0; i0 < m0; i0++)
@@ -115,12 +130,17 @@ void DISTRIBUTE_DATA(int m0, int n0, float *A_seq, float *B_seq, float *C_seq, f
 
 void COLLECTION(int m0, int n0, float *C_seq, float *C_dist)
 {
+    int root_id = 0;
+    int num_ranks;
+    int rid;
+    MPI_STATUS status;
+    int tag = 0;
     // query the number of ranks from MPI using the default communicator
     num_ranks = MPI_COMM_SIZE(MPI_COMM_WORLD);
     // query the rank of the current process
     rid = MPI_COMM_RANK(MPI_COMM_WORLD);
 
-    if(rid == 0)
+    if (rid == root_id)
     {
         // Copy the data from the distributed matrix to the sequential matrix
         for (int i0 = 0; i0 < m0; i0++)
@@ -135,12 +155,17 @@ void COLLECTION(int m0, int n0, float *C_seq, float *C_dist)
 
 void FREE_MEMORY(float *A_dist, float *B_dist, float *C_dist)
 {
+    int root_id = 0;
+    int num_ranks;
+    int rid;
+    MPI_STATUS status;
+    int tag = 0;
     // query the number of ranks from MPI using the default communicator
     num_ranks = MPI_COMM_SIZE(MPI_COMM_WORLD);
     // query the rank of the current process
     rid = MPI_COMM_RANK(MPI_COMM_WORLD);
 
-    if(rid == 0)
+    if (rid == root_id)
     {
         // Free the memory allocated for the matrices
         free(A_dist);
