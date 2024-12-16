@@ -171,5 +171,9 @@ void FREE_MEMORY(float *A_dist, float *B_dist, float *C_dist)
         free(A_dist);
         free(B_dist);
         free(C_dist);
+        // Set the pointers to NULL to avoid dangling pointers
+        A_dist = NULL;
+        B_dist = NULL;
+        C_dist = NULL;
     }
 }
