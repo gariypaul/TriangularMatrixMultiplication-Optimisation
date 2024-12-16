@@ -22,6 +22,8 @@ clean_all: clean
 	rm -f *.csv
 	rm -f *.png
 	
+all: clean run_bench 
+
 
 run_bench: build_bench
 	@echo "Running benchmarks"
