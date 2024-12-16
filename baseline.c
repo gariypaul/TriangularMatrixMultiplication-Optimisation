@@ -40,12 +40,12 @@ void COMPUTE_OP(int m0, int n0, float *A, float *B, float *C)
     int root_id = 0;
     int num_ranks;
     int rid;
-    MPI_STATUS status;
+    MPI_Status status;
     int tag = 0;
     // query the number of ranks from MPI using the default communicator
-    num_ranks = MPI_COMM_SIZE(MPI_COMM_WORLD);
+    num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
     // query the rank of the current process
-    rid = MPI_COMM_RANK(MPI_COMM_WORLD);
+    rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
 
     if (rid == root_id)
     {
@@ -85,12 +85,12 @@ void DISTRIBUTE_ALLOCATION(int m0, int n0, float **A_dist, float **B_dist, float
     int root_id = 0;
     int num_ranks;
     int rid;
-    MPI_STATUS status;
+    MPI_Status status;
     int tag = 0;
     // query the number of ranks from MPI using the default communicator
-    num_ranks = MPI_COMM_SIZE(MPI_COMM_WORLD);
+    num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
     // query the rank of the current process
-    rid = MPI_COMM_RANK(MPI_COMM_WORLD);
+    rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
 
     if (rid == root_id)
     {
@@ -106,12 +106,12 @@ void DISTRIBUTE_DATA(int m0, int n0, float *A_seq, float *B_seq, float *C_seq, f
     int root_id = 0;
     int num_ranks;
     int rid;
-    MPI_STATUS status;
+    MPI_Status status;
     int tag = 0;
     // query the number of ranks from MPI using the default communicator
-    num_ranks = MPI_COMM_SIZE(MPI_COMM_WORLD);
+    num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
     // query the rank of the current process
-    rid = MPI_COMM_RANK(MPI_COMM_WORLD);
+    rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
 
     if (rid == root_id)
     {
@@ -133,12 +133,12 @@ void COLLECTION(int m0, int n0, float *C_seq, float *C_dist)
     int root_id = 0;
     int num_ranks;
     int rid;
-    MPI_STATUS status;
+    MPI_Status status;
     int tag = 0;
     // query the number of ranks from MPI using the default communicator
-    num_ranks = MPI_COMM_SIZE(MPI_COMM_WORLD);
+    num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
     // query the rank of the current process
-    rid = MPI_COMM_RANK(MPI_COMM_WORLD);
+    rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
 
     if (rid == root_id)
     {
@@ -158,12 +158,12 @@ void FREE_MEMORY(float *A_dist, float *B_dist, float *C_dist)
     int root_id = 0;
     int num_ranks;
     int rid;
-    MPI_STATUS status;
+    MPI_Status status;
     int tag = 0;
     // query the number of ranks from MPI using the default communicator
-    num_ranks = MPI_COMM_SIZE(MPI_COMM_WORLD);
+    num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
     // query the rank of the current process
-    rid = MPI_COMM_RANK(MPI_COMM_WORLD);
+    rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
 
     if (rid == root_id)
     {
