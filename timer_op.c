@@ -254,24 +254,24 @@ int main(int argc, char *argv[])
         // perform test
         time_function_call(num_trials, num_runs, results, m0, n0, A_dist_test, B_dist_test, C_dist_test);
 
-        //pick min in results
+        // pick min in results
         long min_time = pick_min_in_list(num_trials, results);
 
-        //get floating operation per second
-        long num_flops = m0 * m0 * n0 * 2; //multiply by two to factor in addition operation
+        // get floating operation per second
+        long num_flops = m0 * m0 * n0 * 2; // multiply by two to factor in addition operation
 
         // get throughput in GFLOPS
         float throughput = (float)num_flops / (float)min_time;
 
-        //free results memory and set pointer to NULL to avoid dangling pointers
+        // free results memory and set pointer to NULL to avoid dangling pointers
         free(results);
         results = NULL;
 
-        //collect the distributed data and write to sequential buffer
+        // collect the distributed data and write to sequential buffer
         COLLECTION_TEST(m0, n0, C_seq, C_dist_test);
 
-        //free buffers
-        FREE_MEMORY_TEST(m0,n0, A_dist_test, B_dist_test, C_dist_test);
+        // free buffers
+        FREE_MEMORY_TEST(m0, n0, A_dist_test, B_dist_test, C_dist_test);
 
         // print the results to the csv file
         if (rid == root_id)
@@ -286,7 +286,6 @@ int main(int argc, char *argv[])
         A_seq = NULL;
         B_seq = NULL;
         C_seq = NULL;
-
     }
 
     // close the file if it was opened
