@@ -11,6 +11,17 @@ NUM_RANKS = 4
 #Shell 
 SHELL:= /bin/bash
 
+clean:
+	@echo "Cleaning up"
+	rm -f *.x
+	rm -f *.o
+	rm -f *~
+
+clean_all: clean
+	@echo "Cleaning up all"
+	rm -f *.csv
+	rm -f *.png
+	
 
 run_bench: build_bench
 	@echo "Running benchmarks"
