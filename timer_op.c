@@ -179,7 +179,7 @@ int main(int argc, char *argv[])
         csv_file = stdout;
     }
 
-    else if (argc == 6 || argc = 7)
+    else if (argc == 6 || argc == 7)
     {
         min_size = atoi(argv[1]);
         max_size = atoi(argv[2]);
@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
         // print the results to the csv file
         if (rid == root_id)
         {
-            fprintf(csv_file, "%d, %d, %d, %d, %ld\n", num_ranks, m0, n0, size, throughput);
+            fprintf(csv_file, "%d, %d, %d, %d, %f\n", num_ranks, m0, n0, size, throughput);
         }
 
         // free the sequential buffers and set pointers to NULL to avoid dangling pointers
