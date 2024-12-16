@@ -27,9 +27,9 @@ all: clean run_bench
 
 run_bench: build_bench
 	@echo "Running benchmarks"
-	mpiexec -n ${NUM_RANKS} ./run_bench_op_var1.x ${MIN_SIZE} ${MAX_SIZE} ${STEP_SIZE} 1 1 result_bench_var1.csv
-	mpiexec -n ${NUM_RANKS} ./run_bench_op_var2.x ${MIN_SIZE} ${MAX_SIZE} ${STEP_SIZE} 1 1 result_bench_var2.csv
-	mpiexec -n ${NUM_RANKS} ./run_bench_op_var3.x ${MIN_SIZE} ${MAX_SIZE} ${STEP_SIZE} 1 1 result_bench_var3.csv
+	mpiexec -n ${NUM_RANKS} ./run_test_variant01.x ${MIN_SIZE} ${MAX_SIZE} ${STEP_SIZE} 1 1 result_bench_var1.csv
+	mpiexec -n ${NUM_RANKS} ./run_test_variant02.x ${MIN_SIZE} ${MAX_SIZE} ${STEP_SIZE} 1 1 result_bench_var2.csv
+	mpiexec -n ${NUM_RANKS} ./run_test_variant03.x ${MIN_SIZE} ${MAX_SIZE} ${STEP_SIZE} 1 1 result_bench_var3.csv
 
 
 build_bench:
