@@ -312,8 +312,10 @@ int main(int argc, char *argv[])
     }
 
     // close the file if it was opened
-    if (csv_file != NULL)
+    if(rid == root_id && csv_file != NULL)
     {
         fclose(csv_file);
     }
+
+    MPI_Finalize();
 }
