@@ -16,7 +16,7 @@ extern void DISTRIBUTE_DATA_TEST(int m0, int n0, float *A_seq, float *B_seq, flo
 
 extern void COLLECTION_TEST(int m0, int n0, float *C_seq, float *C_dist);
 
-extern void FREE_MEMORY_TEST(int m0, int n0, float *A_dist, float *B_dist, float *C_dist);
+extern void FREE_MEMORY_TEST(float *A_dist, float *B_dist, float *C_dist);
 
 // fill created memory buffer with random values
 void fill_buffer_with_random_values(float *buffer, int num_elements)
@@ -66,6 +66,11 @@ void flush_cache()
 
     // allocate memory for buffer that fills the cache
     int *buffer = (int *)malloc(size * sizeof(int));
+    if (buffer == NULL)
+    {
+        printf("Buffer(Cache flush): Memory allocation failed\n");
+        exit(1);
+    }
     // fill the buffer
     int i, result = 0;
     // volatile prevents compiler from optimizing out the loop
@@ -178,8 +183,7 @@ int main(int argc, char *argv[])
 
         csv_file = stdout;
     }
-
-    else if (argc == 6 || argc == 7)
+    else if (argc == 5 + 1 || argc == 6 + 1)
     {
         min_size = atoi(argv[1]);
         max_size = atoi(argv[2]);
@@ -192,7 +196,7 @@ int main(int argc, char *argv[])
         csv_file = stdout;
 
         // if file specified then use the file
-        if (argc == 7)
+        if (argc == 6 + 1)
         {
             csv_file = fopen(argv[6], "w");
         }
@@ -206,7 +210,6 @@ int main(int argc, char *argv[])
         printf("Usage: %s [min_size] [max_size] [step_size] [m0] [n0] [output_file]\n", argv[0]);
         exit(1);
     }
-
     // use the root id to print the header on CSV file
     if (rid == root_id)
     {
@@ -229,27 +232,44 @@ int main(int argc, char *argv[])
         float *B_seq = (float *)malloc(B_seq_size * sizeof(float));
         float *C_seq = (float *)malloc(C_seq_size * sizeof(float));
 
+        // check if memory allocation was successful
+        if (A_seq == NULL || B_seq == NULL || C_seq == NULL)
+        {
+            printf("Test: Sequential Memory buffer allocation failed\n");
+            exit(1);
+        }
+
         // fill buffers with random values using root_id
         if (rid == root_id)
         {
             fill_buffer_with_random_values(A_seq, A_seq_size);
             fill_buffer_with_random_values(B_seq, B_seq_size);
-            fill_buffer_with_random_values(C_seq, C_seq_size);
+            fill_buffer_with_specified_value(C_seq, C_seq_size, 0.0);
         }
 
-        // allocate memory for distributed buffers
+        // allocate pointers for distributed buffers
         float *A_dist_test;
         float *B_dist_test;
         float *C_dist_test;
 
-        // distribute memory allocation
+        // // distribute memory allocation
         DISTRIBUTE_ALLOCATION_TEST(m0, n0, &A_dist_test, &B_dist_test, &C_dist_test);
 
-        // distribute data
+        if (A_dist_test == NULL || B_dist_test == NULL || C_dist_test == NULL)
+        {
+            printf("Test: Distributed Memory buffer allocation failed\n");
+            exit(1);
+        }
+        // // distribute data
         DISTRIBUTE_DATA_TEST(m0, n0, A_seq, B_seq, C_seq, A_dist_test, B_dist_test, C_dist_test);
 
         // allocate memory for results
         long *results = (long *)malloc(num_trials * sizeof(long));
+        if (results == NULL)
+        {
+            printf("Test:Results Memory allocation failed\n");
+            exit(1);
+        }
 
         // perform test
         time_function_call(num_trials, num_runs, results, m0, n0, A_dist_test, B_dist_test, C_dist_test);
@@ -271,7 +291,10 @@ int main(int argc, char *argv[])
         COLLECTION_TEST(m0, n0, C_seq, C_dist_test);
 
         // free buffers
-        FREE_MEMORY_TEST(m0, n0, A_dist_test, B_dist_test, C_dist_test);
+        FREE_MEMORY_TEST(A_dist_test, B_dist_test, C_dist_test);
+        A_dist_test = NULL;
+        B_dist_test = NULL;
+        C_dist_test = NULL;
 
         // print the results to the csv file
         if (rid == root_id)
@@ -283,9 +306,9 @@ int main(int argc, char *argv[])
         free(A_seq);
         free(B_seq);
         free(C_seq);
-        A_seq = NULL;
-        B_seq = NULL;
-        C_seq = NULL;
+        // A_seq = NULL;
+        // B_seq = NULL;
+        // C_seq = NULL;
     }
 
     // close the file if it was opened
