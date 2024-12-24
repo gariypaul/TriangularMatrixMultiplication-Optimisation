@@ -12,10 +12,10 @@ echo $CC
 echo $CFLAGS
 
 COMPUTE_NAME_REF="baseline"
-DISTRIBUTED_ALLOCATE_NAME_REF="baseline_allocate"
+DISTRIBUTED_ALLOCATE_NAME_REF="baseline_distribute"
 DISTRIBUTED_FREE_NAME_REF="baseline_free"
-DISTRIBUTED_DATA_NAME_REF="baseline_dist"
-COLLECT_DATA_NAME_REF="baseline_collect_data"
+DISTRIBUTED_DATA_NAME_REF="baseline_distribute_data"
+COLLECT_DATA_NAME_REF="baseline_collect"
 
 COMPUTE_NAME_TST="test"
 DISTRIBUTED_ALLOCATE_NAME_TST="test_allocate"
@@ -77,3 +77,6 @@ ${CC} ${CFLAGS} ${TEST_RIG}.o  ${VARIANT_2}.o -o ./run_test_variant02.x
 ${CC} ${CFLAGS} ${TEST_RIG}.o  ${VARIANT_3}.o -o ./run_test_variant03.x
 
 echo "Build Test: complete"
+
+#turn off command echoing
+set +x
