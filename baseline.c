@@ -3,7 +3,7 @@
 #include <mpi.h>
 
 #ifndef COMPUTE_OP
-#define COMPUTE_OP baseline_compute
+#define COMPUTE_OP baseline
 #endif
 
 #ifndef DISTRIBUTE_ALLOCATION
