@@ -213,14 +213,14 @@ int main(int argc, char *argv[])
     // use the root id to print the header on CSV file
     if (rid == root_id)
     {
-        fprintf(csv_file, "num_ranks, m0, n0, size, time\n");
+        fprintf(csv_file, "num_ranks,m0,n0,gflops\n");
     }
 
     for (int size = min_size; size <= max_size; size += step_size)
     {
         // scale the input sizes as per the step size
-        int m0 = scale_steps(step_size, input_m0);
-        int n0 = scale_steps(step_size, input_n0);
+        int m0 = scale_steps(size, input_m0);
+        int n0 = scale_steps(size, input_n0);
 
         // buffer sizes
         int A_seq_size = m0 * m0;
@@ -299,7 +299,7 @@ int main(int argc, char *argv[])
         // print the results to the csv file
         if (rid == root_id)
         {
-            fprintf(csv_file, "%d, %d, %d, %d, %f\n", num_ranks, m0, n0, size, throughput);
+            fprintf(csv_file, "%d, %d, %d,%2.2f\n", num_ranks, m0, n0,throughput);
         }
 
         // free the sequential buffers and set pointers to NULL to avoid dangling pointers
