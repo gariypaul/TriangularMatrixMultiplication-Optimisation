@@ -4,12 +4,12 @@ set -x
 #set source script
 source dispatch_variables.sh
 
-ECHO $BASELINE_VARIANT
-ECHO $VARIANT_1
-ECHO $VARIANT_2
-ECHO $VARIANT_3
-ECHO $CC
-ECHO $CFLAGS
+echo $BASELINE_VARIANT
+echo $VARIANT_1
+echo $VARIANT_2
+echo $VARIANT_3
+echo $CC
+echo $CFLAGS
 
 #set reference names
 COMPUTE_NAME_REF="baseline"

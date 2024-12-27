@@ -46,7 +46,7 @@ run-verifier: build-verifier
 	mpiexec -n ${NUM_RANKS} ./run_verifier_variant03.x ${MIN_SIZE} ${MAX_SIZE} ${STEP_SIZE} 1 1 result_verifier_var3.csv
 	cat result_verifier_var3.csv
 	
-	@echo "Number of FAILS: $$(grep -c "FAIL" result_verifier_var*.csv | awk '{sum+=$$1} END {print sum}')"
+	@echo "Number of FAILS: $$(grep -c "FAIL" result_verifier_var*.csv | wc -l)"
 
 build-verifier:
 	@echo "Building verifier"
