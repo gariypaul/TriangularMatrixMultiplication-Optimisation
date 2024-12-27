@@ -22,6 +22,9 @@
 #define FREE_MEMORY baseline_free
 #endif
 
+#define BLOCK_SIZE 16
+
+#define min(a, b) (((a) < (b)) ? (a) : (b))
 /*
 This operation focuses on Lower Triangular Matrix Multiplication
 The operation is C = A * B
@@ -60,6 +63,7 @@ void COMPUTE_OP(int m0, int n0, float *A, float *B, float *C)
         int rs_C = m0;
         int CS_C = 1;
 
+        int block_size_dist = BLOCK_SIZE * (m0 / BLOCK_SIZE);
         /*
             TODO:
             1: Add loop unrolling
@@ -67,16 +71,24 @@ void COMPUTE_OP(int m0, int n0, float *A, float *B, float *C)
             3: Add Parallelization
         */
 
-        for (int i0 = 0; i0 < n0; i0++)
+        // Lower Triangular Matrix Multiplication algorithm
+
+        for (int i = 0; i < block_size_dist; i += BLOCK_SIZE)
         {
-            for (int j0 = 0; j0 < m0; j0++)
+            for (int j = 0; j < block_size_dist; j += BLOCK_SIZE)
             {
-                float result = 0.0f;
-                for (int k0 = 0; k0 <= i0; k0++)
+                for (int r = 0; r < m0; r++)
                 {
-                    result += A[i0 * rs_A + k0 * CS_A] * B[k0 * rs_B + j0 * CS_B];
+                    for (int ji = j; ji < min(j + BLOCK_SIZE, block_size_dist); ji++)
+                    {
+                        float sum = 0.0f; // Initialize sum for each output element
+                        for (int ii = i; ii < min(i + BLOCK_SIZE, r + 1); ii++)
+                        {
+                            sum += A[r * rs_A + ii] * B[ii * rs_B + ji];
+                        }
+                        C[r * rs_C + ji] += sum; // Accumulate result into C
+                    }
                 }
-                C[i0 * rs_C + j0 * CS_C] = result;
             }
         }
     }
