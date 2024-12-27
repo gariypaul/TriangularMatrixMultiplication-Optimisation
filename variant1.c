@@ -54,26 +54,24 @@ void COMPUTE_OP(int m0, int n0, float *A, float *B, float *C)
         int rs_A = m0;
         int CS_A = 1;
 
-        int rs_B = m0;
+        int rs_B = n0;
         int CS_B = 1;
 
-        int rs_C = m0;
+        int rs_C = n0;
         int CS_C = 1;
 
+        float result;
         // Lower Triangular Matrix Multiplication algorithm
-        for (int i0 = 0; i0 < n0; i0++)
+        for (int i0 = 0; i0 < m0; i0++)
         {
-            for (int j0 = 0; j0 < m0; j0++)
+            for (int j0 = 0; j0 < n0; j0++)
             {
-                float result = 0.0f;
-                for (int k0 = 0; k0 < m0; k0++)
+                result = 0.0f;
+                for (int k0 = 0; k0 <= i0; k0++)
                 {
-                    if (i0 >= k0)
-                    {
-                        result += A[i0 * rs_A + k0 * CS_A] * B[k0 * rs_B + j0 * CS_B];
-                    }
+                    result += A[i0 * rs_A + k0] * B[k0 * rs_B + j0];
                 }
-                C[i0 * rs_C + j0 * CS_C] = result;
+                C[i0 * rs_C + j0] = result;
             }
         }
     }
