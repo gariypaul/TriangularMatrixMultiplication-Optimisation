@@ -64,29 +64,26 @@ void COMPUTE_OP(int m0, int n0, float *A, float *B, float *C)
         int CS_C = 1;
 
         int block_size_dist = BLOCK_SIZE * (m0 / BLOCK_SIZE);
-        /*
-            TODO:
-            1: Add loop unrolling
-            2: Add Blocking
-            3: Add Parallelization
-        */
-
-        // Lower Triangular Matrix Multiplication algorithm
-
-        for (int i = 0; i < block_size_dist; i += BLOCK_SIZE)
+       
+        // Blocked matrix multiplication
+        for (int i0 = 0; i0 < m0; i0 += BLOCK_SIZE)
         {
-            for (int j = 0; j < block_size_dist; j += BLOCK_SIZE)
+            for (int j0 = 0; j0 < n0; j0 += BLOCK_SIZE)
             {
-                for (int r = 0; r < m0; r++)
+                for (int k0 = 0; k0 <= i0; k0 += BLOCK_SIZE)
                 {
-                    for (int ji = j; ji < min(j + BLOCK_SIZE, block_size_dist); ji++)
+                    // Process block
+                    for (int i = i0; i < min(i0 + BLOCK_SIZE, m0); i++)
                     {
-                        float sum = 0.0f; // Initialize sum for each output element
-                        for (int ii = i; ii < min(i + BLOCK_SIZE, r + 1); ii++)
+                        for (int j = j0; j < min(j0 + BLOCK_SIZE, n0); j++)
                         {
-                            sum += A[r * rs_A + ii] * B[ii * rs_B + ji];
+                            float sum = 0.0f;
+                            for (int k = k0; k < min(k0 + BLOCK_SIZE, i + 1); k++)
+                            {
+                                sum += A[i * rs_A + k] * B[k * rs_B + j];
+                            }
+                            C[i * rs_C + j] += sum;
                         }
-                        C[r * rs_C + ji] += sum; // Accumulate result into C
                     }
                 }
             }
