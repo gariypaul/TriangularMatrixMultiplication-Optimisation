@@ -1,6 +1,6 @@
+#include <mpi.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <mpi.h>
 
 #ifndef COMPUTE_OP
 #define COMPUTE_OP baseline_compute
@@ -38,100 +38,20 @@ C is a m0 x n0 matrix
 
 */
 
-void COMPUTE_OP(int m0, int n0, float *A, float *B, float *C)
-{
-    int root_id = 0;
-    int num_ranks;
-    int rid;
-    MPI_Status status;
-    int tag = 0;
-    // query the number of ranks from MPI using the default communicator
-    num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
-    // query the rank of the current process
-    rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
+void COMPUTE_OP(int m0, int n0, float *A, float *B, float *C) {
+  int root_id = 0;
+  int num_ranks;
+  int rid;
+  MPI_Status status;
+  int tag = 0;
+  // query the number of ranks from MPI using the default communicator
+  num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
+  // query the rank of the current process
+  rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
 
-    if (rid == root_id)
-    {
-        // Matrices Row and Column Strides
-        // Matrices are stored in Row Major Order
-        int rs_A = m0;
-        int CS_A = 1;
-
-        int rs_B = m0;
-        int CS_B = 1;
-
-        int rs_C = m0;
-        int CS_C = 1;
-
-        int block_size_dist = BLOCK_SIZE * (m0 / BLOCK_SIZE);
-       
-        // Blocked matrix multiplication
-        for (int i0 = 0; i0 < m0; i0 += BLOCK_SIZE)
-        {
-            for (int j0 = 0; j0 < n0; j0 += BLOCK_SIZE)
-            {
-                for (int k0 = 0; k0 <= i0; k0 += BLOCK_SIZE)
-                {
-                    // Process block
-                    for (int i = i0; i < min(i0 + BLOCK_SIZE, m0); i++)
-                    {
-                        for (int j = j0; j < min(j0 + BLOCK_SIZE, n0); j++)
-                        {
-                            float sum = 0.0f;
-                            for (int k = k0; k < min(k0 + BLOCK_SIZE, i + 1); k++)
-                            {
-                                sum += A[i * rs_A + k] * B[k * rs_B + j];
-                            }
-                            C[i * rs_C + j] += sum;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-void DISTRIBUTE_ALLOCATION(int m0, int n0, float **A_dist, float **B_dist, float **C_dist)
-{
-
-    int root_id = 0;
-    int num_ranks;
-    int rid;
-    MPI_Status status;
-    int tag = 0;
-    // query the number of ranks from MPI using the default communicator
-    num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
-    // query the rank of the current process
-    rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
-
-    if (rid == root_id)
-    {
-        // Allocate memory for the matrices
-        *A_dist = (float *)malloc(m0 * m0 * sizeof(float));
-        *B_dist = (float *)malloc(m0 * n0 * sizeof(float));
-        *C_dist = (float *)malloc(m0 * n0 * sizeof(float));
-        // Check if memory allocation was successful
-        if (*A_dist == NULL || *B_dist == NULL || *C_dist == NULL)
-        {
-            printf("Memory allocation failed\n");
-            exit(1);
-        }
-    }
-}
-
-void DISTRIBUTE_DATA(int m0, int n0, float *A_seq, float *B_seq, float *C_seq, float *A_dist, float *B_dist, float *C_dist)
-{
-    int root_id = 0;
-    int num_ranks;
-    int rid;
-    MPI_Status status;
-    int tag = 0;
-    // query the number of ranks from MPI using the default communicator
-    num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
-    // query the rank of the current process
-    rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
-
+  if (rid == root_id) {
     // Matrices Row and Column Strides
+    // Matrices are stored in Row Major Order
     int rs_A = m0;
     int CS_A = 1;
 
@@ -141,77 +61,118 @@ void DISTRIBUTE_DATA(int m0, int n0, float *A_seq, float *B_seq, float *C_seq, f
     int rs_C = m0;
     int CS_C = 1;
 
-    if (rid == root_id)
-    {
-        // Copy the data from the sequential matrices to the distributed matrices
-        for (int i0 = 0; i0 < m0; i0++)
-        {
-            for (int j0 = 0; j0 < n0; j0++)
-            {
-                A_dist[i0 * rs_A + j0 * CS_A] = A_seq[i0 * rs_A + j0 * CS_A];
-            }
-        }
-
-        for (int i0 = 0; i0 < m0; i0++)
-        {
-            for (int j0 = 0; j0 < n0; j0++)
-            {
-                B_dist[i0 * rs_B + j0 * CS_B] = B_seq[i0 * rs_B + j0 * CS_B];
-            }
-        }
-
-        for (int i0 = 0; i0 < m0; i0++)
-        {
-            for (int j0 = 0; j0 < n0; j0++)
-            {
-                C_dist[i0 * rs_C + j0 * CS_C] = C_seq[i0 * rs_C + j0 * CS_C];
-            }
-        }
-    }
+    int block_size_dist = BLOCK_SIZE * (m0 / BLOCK_SIZE);
+  }
+}
+}
+}
 }
 
-void COLLECTION(int m0, int n0, float *C_seq, float *C_dist)
-{
-    int root_id = 0;
-    int num_ranks;
-    int rid;
-    MPI_Status status;
-    int tag = 0;
-    // query the number of ranks from MPI using the default communicator
-    num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
-    // query the rank of the current process
-    rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
+void DISTRIBUTE_ALLOCATION(int m0, int n0, float **A_dist, float **B_dist,
+                           float **C_dist) {
+  int root_id = 0;
+  int num_ranks;
+  int rid;
+  MPI_Status status;
+  int tag = 0;
+  // query the number of ranks from MPI using the default communicator
+  num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
+  // query the rank of the current process
+  rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
 
-    if (rid == root_id)
-    {
-        // Copy the data from the distributed matrix to the sequential matrix
-        for (int i0 = 0; i0 < m0; i0++)
-        {
-            for (int j0 = 0; j0 < n0; j0++)
-            {
-                C_seq[i0 * m0 + j0] = C_dist[i0 * m0 + j0];
-            }
-        }
+  if (rid == root_id) {
+    // Allocate memory for the matrices
+    *A_dist = (float *)malloc(m0 * m0 * sizeof(float));
+    *B_dist = (float *)malloc(m0 * n0 * sizeof(float));
+    *C_dist = (float *)malloc(m0 * n0 * sizeof(float));
+    // Check if memory allocation was successful
+    if (*A_dist == NULL || *B_dist == NULL || *C_dist == NULL) {
+      printf("Memory allocation failed\n");
+      exit(1);
     }
+  }
 }
 
-void FREE_MEMORY(float *A_dist, float *B_dist, float *C_dist)
-{
-    int root_id = 0;
-    int num_ranks;
-    int rid;
-    MPI_Status status;
-    int tag = 0;
-    // query the number of ranks from MPI using the default communicator
-    num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
-    // query the rank of the current process
-    rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
+void DISTRIBUTE_DATA(int m0, int n0, float *A_seq, float *B_seq, float *C_seq,
+                     float *A_dist, float *B_dist, float *C_dist) {
+  int root_id = 0;
+  int num_ranks;
+  int rid;
+  MPI_Status status;
+  int tag = 0;
+  // query the number of ranks from MPI using the default communicator
+  num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
+  // query the rank of the current process
+  rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
 
-    if (rid == root_id)
-    {
-        // Free the memory allocated for the matrices
-        free(A_dist);
-        free(B_dist);
-        free(C_dist);
+  // Matrices Row and Column Strides
+  int rs_A = m0;
+  int CS_A = 1;
+
+  int rs_B = m0;
+  int CS_B = 1;
+
+  int rs_C = m0;
+  int CS_C = 1;
+
+  if (rid == root_id) {
+    // Copy the data from the sequential matrices to the distributed matrices
+    for (int i0 = 0; i0 < m0; i0++) {
+      for (int j0 = 0; j0 < n0; j0++) {
+        A_dist[i0 * rs_A + j0 * CS_A] = A_seq[i0 * rs_A + j0 * CS_A];
+      }
     }
+
+    for (int i0 = 0; i0 < m0; i0++) {
+      for (int j0 = 0; j0 < n0; j0++) {
+        B_dist[i0 * rs_B + j0 * CS_B] = B_seq[i0 * rs_B + j0 * CS_B];
+      }
+    }
+
+    for (int i0 = 0; i0 < m0; i0++) {
+      for (int j0 = 0; j0 < n0; j0++) {
+        C_dist[i0 * rs_C + j0 * CS_C] = C_seq[i0 * rs_C + j0 * CS_C];
+      }
+    }
+  }
+}
+
+void COLLECTION(int m0, int n0, float *C_seq, float *C_dist) {
+  int root_id = 0;
+  int num_ranks;
+  int rid;
+  MPI_Status status;
+  int tag = 0;
+  // query the number of ranks from MPI using the default communicator
+  num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
+  // query the rank of the current process
+  rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
+
+  if (rid == root_id) {
+    // Copy the data from the distributed matrix to the sequential matrix
+    for (int i0 = 0; i0 < m0; i0++) {
+      for (int j0 = 0; j0 < n0; j0++) {
+        C_seq[i0 * m0 + j0] = C_dist[i0 * m0 + j0];
+      }
+    }
+  }
+}
+
+void FREE_MEMORY(float *A_dist, float *B_dist, float *C_dist) {
+  int root_id = 0;
+  int num_ranks;
+  int rid;
+  MPI_Status status;
+  int tag = 0;
+  // query the number of ranks from MPI using the default communicator
+  num_ranks = MPI_Comm_size(MPI_COMM_WORLD, &num_ranks);
+  // query the rank of the current process
+  rid = MPI_Comm_rank(MPI_COMM_WORLD, &rid);
+
+  if (rid == root_id) {
+    // Free the memory allocated for the matrices
+    free(A_dist);
+    free(B_dist);
+    free(C_dist);
+  }
 }

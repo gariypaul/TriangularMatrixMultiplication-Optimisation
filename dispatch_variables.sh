@@ -6,4 +6,4 @@ VARIANT_3="variant3.c"
 
 #Compiler flags
 CC=mpicc
-CFLAGS="-std=c99 -O2 -mfma -mavx2"
+CFLAGS="-std=c99 -O2 -mfma -mavx2 -Wall -Wextra -g"
