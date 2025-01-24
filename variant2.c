@@ -62,10 +62,25 @@ void COMPUTE_OP(int m0, int n0, float *A, float *B, float *C) {
     int CS_C = 1;
 
     int block_size_dist = BLOCK_SIZE * (m0 / BLOCK_SIZE);
+
+    // Blocked matrix multiplication
+    for (int i0 = 0; i0 < m0; i0 += BLOCK_SIZE) {
+      for (int j0 = 0; j0 < n0; j0 += BLOCK_SIZE) {
+        for (int k0 = 0; k0 <= i0; k0 += BLOCK_SIZE) {
+          // Process block
+          for (int i = i0; i < min(i0 + BLOCK_SIZE, m0); i++) {
+            for (int j = j0; j < min(j0 + BLOCK_SIZE, n0); j++) {
+              float sum = 0.0f;
+              for (int k = k0; k < min(k0 + BLOCK_SIZE, i + 1); k++) {
+                sum += A[i * rs_A + k] * B[k * rs_B + j];
+              }
+              C[i * rs_C + j] += sum;
+            }
+          }
+        }
+      }
+    }
   }
-}
-}
-}
 }
 
 void DISTRIBUTE_ALLOCATION(int m0, int n0, float **A_dist, float **B_dist,

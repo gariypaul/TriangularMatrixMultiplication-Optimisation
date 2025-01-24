@@ -15,6 +15,8 @@ def main_plotter():
             )
         )
         sys.exit(2)
+
+
 chart_title = sys.argv[1]
 output_file = sys.argv[2]
 input_files = sys.argv[3:]
@@ -22,7 +24,7 @@ input_files = sys.argv[3:]
 x_label = "Size (m0)"
 y_label = "Performance (Gflop/s)"
 
-ymax  = 1
+ymax = 1
 
 figure, ax = plt.subplots()
 
@@ -33,7 +35,7 @@ for input_file in input_files:
     ax.plot(xsize, res, label=input_file)
     ymax = max(ymax, max(res))
 
-ax.set(xlabel=x_label, ylabel=y_label, title=chart_title, ylim=[0, ymax*1.5])
+ax.set(xlabel=x_label, ylabel=y_label, title=chart_title, ylim=[0, ymax * 1.5])
 
 plt.legend()
 plt.grid()
@@ -42,4 +44,3 @@ plt.savefig(output_file)
 
 if __name__ == "__main__":
     main_plotter()
-
